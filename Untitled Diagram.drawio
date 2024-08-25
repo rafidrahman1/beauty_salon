@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" version="24.7.7">
   <diagram name="Page-1" id="w3RHZ2_j4D2kVHN4OV_M">
-    <mxGraphModel dx="1399" dy="1865" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1032" dy="1865" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -30,17 +30,6 @@
         </mxCell>
         <mxCell id="53jQ0BVINCxKonlIrl2N-4" value="Product" style="shape=datastore;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
           <mxGeometry x="495" y="1070" width="80" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="53jQ0BVINCxKonlIrl2N-55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;fillColor=#fff2cc;strokeColor=#d6b656;" edge="1" parent="1" source="53jQ0BVINCxKonlIrl2N-62" target="53jQ0BVINCxKonlIrl2N-43">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="420" y="350" />
-              <mxPoint x="640" y="350" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="53jQ0BVINCxKonlIrl2N-63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fillColor=#fff2cc;strokeColor=#d6b656;" edge="1" parent="1" source="53jQ0BVINCxKonlIrl2N-5" target="53jQ0BVINCxKonlIrl2N-62">
-          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="53jQ0BVINCxKonlIrl2N-5" value="Order Details" style="shape=datastore;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
           <mxGeometry x="265" y="1200" width="80" height="80" as="geometry" />
@@ -153,9 +142,6 @@
             <mxPoint x="480" y="100" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="53jQ0BVINCxKonlIrl2N-51" value="Purchases" style="shape=datastore;whiteSpace=wrap;html=1;fillColor=#60a917;fontColor=#ffffff;strokeColor=#2D7600;" vertex="1" parent="1">
-          <mxGeometry x="495" y="1200" width="80" height="80" as="geometry" />
-        </mxCell>
         <mxCell id="53jQ0BVINCxKonlIrl2N-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fillColor=#fff2cc;strokeColor=#d6b656;" edge="1" parent="1" source="53jQ0BVINCxKonlIrl2N-50" target="53jQ0BVINCxKonlIrl2N-5">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
@@ -183,9 +169,6 @@
               <mxPoint x="400" y="10" />
             </Array>
           </mxGeometry>
-        </mxCell>
-        <mxCell id="53jQ0BVINCxKonlIrl2N-62" value="Product Price" style="shape=datastore;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
-          <mxGeometry x="380" y="1200" width="80" height="80" as="geometry" />
         </mxCell>
         <mxCell id="53jQ0BVINCxKonlIrl2N-73" value="Payment" style="swimlane;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
           <mxGeometry x="50" y="370" width="320" height="440" as="geometry" />
@@ -226,8 +209,9 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="53jQ0BVINCxKonlIrl2N-85" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="53jQ0BVINCxKonlIrl2N-76" target="53jQ0BVINCxKonlIrl2N-51">
+        <mxCell id="53jQ0BVINCxKonlIrl2N-85" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="53jQ0BVINCxKonlIrl2N-76" target="53jQ0BVINCxKonlIrl2N-5">
           <mxGeometry relative="1" as="geometry">
+            <mxPoint x="575" y="1240" as="targetPoint" />
             <Array as="points">
               <mxPoint x="730" y="760" />
               <mxPoint x="730" y="1240" />
