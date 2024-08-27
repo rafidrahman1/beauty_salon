@@ -6,14 +6,14 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 late Size mq;
 
 void main() async {
-  await _setup();
+  // await _setup();
   runApp(const MyApp());
 }
 
-Future<void> _setup() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey = stripePublishableKey;
-}
+// Future<void> _setup() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   Stripe.publishableKey = stripePublishableKey;
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

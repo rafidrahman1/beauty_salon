@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'service_screen.dart';
+import 'package:beauty_salon/services/category_service.dart';
+import 'package:beauty_salon/model/category.dart';
+import 'product_screen.dart';
 
 class CategoryScreen extends StatefulWidget {
-  const CategoryScreen({super.key});
+  final int townId;
+
+  const CategoryScreen({super.key, required this.townId});
 
   @override
-  State<CategoryScreen> createState() => _CategoryScreenState();
+  _CategoryScreenState createState() => _CategoryScreenState();
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
@@ -16,18 +18,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   @override
   void initState() {
     super.initState();
-    _categoriesFuture = fetchCategories();
-  }
-
-  Future<List<Category>> fetchCategories() async {
-    final response = await http.get(Uri.parse('https://yourapi.com/categories'));
-
-    if (response.statusCode == 200) {
-      List<dynamic> jsonData = json.decode(response.body);
-      return jsonData.map((json) => Category.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load categories');
-    }
+    _categoriesFuture = CategoryService().fetchCategories(widget.townId);
   }
 
   @override
@@ -57,7 +48,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => ServicesScreen(category: categories[index]),
+                        builder: (context) => ProductScreen(categoryId: categories[index].id), // Pass the category id
                       ),
                     );
                   },
@@ -67,18 +58,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
           }
         },
       ),
-    );
-  }
-}
-
-class Category {
-  final String name;
-
-  Category({required this.name});
-
-  factory Category.fromJson(Map<String, dynamic> json) {
-    return Category(
-      name: json['name'] ?? '',
     );
   }
 }
