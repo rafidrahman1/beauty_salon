@@ -1,3 +1,4 @@
+import 'package:beauty_salon/screens/appointment_screen.dart';
 import 'package:beauty_salon/services/stripe_service.dart';
 import 'package:flutter/material.dart';
 import 'category_screen.dart';

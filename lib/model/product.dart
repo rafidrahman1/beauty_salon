@@ -10,8 +10,8 @@ class Product {
     return Product(
       id: json['id'],
       name: json['name'] ?? '',
-      time: json['time'] ?? 0,
-      price: json['price'] ?? 0,
+      time: json['time'] ?? '',
+      price: json['price'] ?? '',
     );
   }
 }
