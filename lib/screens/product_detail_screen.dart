@@ -78,7 +78,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         context,
         MaterialPageRoute(builder: (context) => UserScreen()),
       );
-      _showSuccessSnackBar('Order confirmed!');
+      _showSuccessSnackBar('All Products Added');
     } else {
       _showErrorSnackBar('No products to confirm.');
     }

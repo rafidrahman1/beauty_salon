@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:beauty_salon/utils/form_validators.dart';
-import 'package:beauty_salon/global.dart' as globals;
 
 class OrderForm extends StatefulWidget {
-  final Future<void> Function(
-      String orderName,
-      String orderEmail,
-      String orderPhone,
-      String orderComment,
-      ) onSubmitOrder;
+  final Future<void> Function(String, String, String, String) onSubmitOrder;
 
   const OrderForm({required this.onSubmitOrder, super.key});
 
   @override
-  State<OrderForm> createState() => _OrderFormState();
+  _OrderFormState createState() => _OrderFormState();
 }
 
 class _OrderFormState extends State<OrderForm> {
@@ -22,15 +15,6 @@ class _OrderFormState extends State<OrderForm> {
   final _orderEmailController = TextEditingController();
   final _orderPhoneController = TextEditingController();
   final _orderCommentController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _orderNameController.text = globals.globalOrderName;
-    _orderEmailController.text = globals.globalOrderEmail;
-    _orderPhoneController.text = globals.globalOrderPhone;
-    _orderCommentController.text = globals.globalOrderComment;
-  }
 
   @override
   void dispose() {
@@ -43,12 +27,12 @@ class _OrderFormState extends State<OrderForm> {
 
   Future<void> _submitOrder() async {
     if (_formKey.currentState!.validate()) {
-      await widget.onSubmitOrder(
-        _orderNameController.text,
-        _orderEmailController.text,
-        _orderPhoneController.text,
-        _orderCommentController.text,
-      );
+      final orderName = _orderNameController.text;
+      final orderEmail = _orderEmailController.text;
+      final orderPhone = _orderPhoneController.text;
+      final orderComment = _orderCommentController.text;
+
+      await widget.onSubmitOrder(orderName, orderEmail, orderPhone, orderComment);
     }
   }
 
@@ -63,24 +47,21 @@ class _OrderFormState extends State<OrderForm> {
             TextFormField(
               controller: _orderNameController,
               decoration: const InputDecoration(labelText: 'Order Name'),
-              validator: (value) => FormValidators.validateRequired(
-                value,
-                'Order name is required',
-              ),
+              validator: (value) => value == null || value.isEmpty ? 'Order name is required' : null,
             ),
             const SizedBox(height: 16.0),
             TextFormField(
               controller: _orderEmailController,
               decoration: const InputDecoration(labelText: 'Order Email'),
               keyboardType: TextInputType.emailAddress,
-              validator: FormValidators.validateEmail,
+              validator: (value) => value == null || value.isEmpty || !RegExp(r"^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$").hasMatch(value) ? 'Enter a valid email' : null,
             ),
             const SizedBox(height: 16.0),
             TextFormField(
               controller: _orderPhoneController,
               decoration: const InputDecoration(labelText: 'Order Phone Number'),
               keyboardType: TextInputType.phone,
-              validator: FormValidators.validatePhoneNumber,
+              validator: (value) => value == null || value.isEmpty || !RegExp(r"^\d{10}$").hasMatch(value) ? 'Enter a valid phone number' : null,
             ),
             const SizedBox(height: 16.0),
             TextFormField(

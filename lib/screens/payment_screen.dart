@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:beauty_salon/services/stripe_service.dart'; // Import your StripeService
+import 'package:beauty_salon/services/stripe_service.dart';
+import 'package:beauty_salon/services/order_service.dart'; // Import OrderService
+import 'package:beauty_salon/global.dart' as globals;
 
 class PaymentScreen extends StatefulWidget {
   final double amount; // Amount to be charged
-  final Future<void> Function() onSuccess; // Callback function to submit the form
+  final String orderName;
+  final String orderEmail;
+  final String orderPhone;
+  final String orderComment;
 
   const PaymentScreen({
     required this.amount,
-    required this.onSuccess,
+    required this.orderName,
+    required this.orderEmail,
+    required this.orderPhone,
+    required this.orderComment,
     super.key,
   });
 
@@ -27,28 +35,45 @@ class _PaymentScreenState extends State<PaymentScreen> {
       final result = await StripeService.instance.makePayment(widget.amount);
 
       if (result) {
-        // Payment successful
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Payment successful!'),
-          ),
+        // Payment successful, create the order
+        final orderDetails = globals.selectedProducts.map((product) {
+          return '${product.name} - Time: ${product.time} min | Price: \$${product.price}';
+        }).join('\n');
+
+        final totalAmount = globals.selectedProducts.fold(
+          0.0,
+              (sum, product) => sum + product.price,
         );
-        await widget.onSuccess(); // Call the callback function to submit the form
-        Navigator.pop(context); // Go back to previous screen or main screen
+
+        final orderCreated = await OrderService.createOrder(
+          name: widget.orderName,
+          email: widget.orderEmail,
+          phone: widget.orderPhone,
+          comment: widget.orderComment,
+          details: orderDetails,
+          price: totalAmount,
+        );
+
+        if (orderCreated) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Order Created Successfully')),
+          );
+          Navigator.pop(context); // Go back to previous screen or main screen
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to create order')),
+          );
+        }
       } else {
         // Payment failed
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Payment failed. Please try again.'),
-          ),
+          const SnackBar(content: Text('Payment failed. Please try again.')),
         );
       }
     } catch (e) {
       // Handle error
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-        ),
+        SnackBar(content: Text('Error: $e')),
       );
     } finally {
       setState(() {
