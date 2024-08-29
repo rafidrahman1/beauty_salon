@@ -17,6 +17,7 @@ Future<void> _setup() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,15 +25,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           appBarTheme: const AppBarTheme(
-            centerTitle: true,
-            elevation: 1,
-            iconTheme: IconThemeData(color: Colors.black),
-            titleTextStyle: TextStyle(
-                color: Colors.black, fontWeight: FontWeight.normal, fontSize: 19),
-            backgroundColor: Colors.white,
-          )),
+        centerTitle: true,
+        elevation: 1,
+        iconTheme: IconThemeData(color: Colors.black),
+        titleTextStyle: TextStyle(
+            color: Colors.black, fontWeight: FontWeight.normal, fontSize: 19),
+        backgroundColor: Colors.white,
+      )),
       home: SplashScreen(),
-
     );
   }
 }

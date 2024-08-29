@@ -1,20 +1,21 @@
-import 'package:beauty_salon/screens/product_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:beauty_salon/model/product.dart';
+import 'package:beauty_salon/screens/product_detail_screen.dart';
 import 'package:beauty_salon/services/product_service.dart';
-import 'package:beauty_salon/widget/appointment_time_picker.dart';
-import 'package:beauty_salon/widget/appointment_date_picker.dart';
-import 'package:beauty_salon/widget/appointment_utils.dart';
+import 'package:beauty_salon/widgets/appointment_date_picker.dart';
+import 'package:beauty_salon/widgets/appointment_time_picker.dart';
+import 'package:beauty_salon/widgets/appointment_end_time_display.dart';
+import 'package:beauty_salon/utils/appointment_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:beauty_salon/global.dart' as globals;
 
 class AppointmentScreen extends StatefulWidget {
   final int productId;
-  final int productDuration; // Duration in minutes for the selected product
+  final int productDuration;
 
   const AppointmentScreen({
     required this.productId,
-    required this.productDuration, // Pass this duration from the previous screen
+    required this.productDuration,
     super.key,
   });
 
@@ -25,28 +26,21 @@ class AppointmentScreen extends StatefulWidget {
 class _AppointmentScreenState extends State<AppointmentScreen> {
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = const TimeOfDay(hour: 9, minute: 0);
-  late TimeOfDay _endTime; // This will hold the calculated end time
-
-  Product? _product; // To store the product details
+  late TimeOfDay _endTime;
+  late Future<Product> _productFuture;
 
   @override
   void initState() {
     super.initState();
-    _endTime = _calculateEndTime(_selectedTime, widget.productDuration);
-    _fetchProduct(); // Fetch the product details
-  }
-
-  TimeOfDay _calculateEndTime(TimeOfDay startTime, int duration) {
-    final endTimeHour = (startTime.hour + (startTime.minute + duration) ~/ 60) % 24;
-    final endTimeMinute = (startTime.minute + duration) % 60;
-    return TimeOfDay(hour: endTimeHour, minute: endTimeMinute);
+    _endTime = calculateEndTime(_selectedTime, widget.productDuration);
+    _productFuture = ProductService().fetchProductById(widget.productId);
   }
 
   void _onTimeSelected(TimeOfDay selectedTime) {
     if (isValidTime(selectedTime)) {
       setState(() {
         _selectedTime = selectedTime;
-        _endTime = _calculateEndTime(selectedTime, widget.productDuration);
+        _endTime = calculateEndTime(selectedTime, widget.productDuration);
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -57,30 +51,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     }
   }
 
-  Future<void> _fetchProduct() async {
-    try {
-      final product = await ProductService().fetchProductById(widget.productId);
-      setState(() {
-        _product = product;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error fetching product: $e'),
-        ),
-      );
-    }
-  }
-
-  void _confirmAppointment() {
-    if (_product == null) return; // Ensure product is fetched
-
+  void _confirmAppointment(Product product) {
     final formattedDate = DateFormat('dd-MMM-yy').format(_selectedDate);
     final formattedStartTime = _selectedTime.format(context);
     final formattedEndTime = _endTime.format(context);
 
-    // Add the product to the global selected products list
-    globals.selectedProducts.add(_product!);
+    globals.selectedProducts.add(product);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -91,7 +67,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ProductDetailScreen(productId: widget.productId),
+        builder: (context) => ProductDetailScreen(),
       ),
     );
   }
@@ -102,33 +78,47 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       appBar: AppBar(
         title: const Text('Book an Appointment'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppointmentDatePicker(
-              selectedDate: _selectedDate,
-              onDateSelected: (date) {
-                setState(() {
-                  _selectedDate = date;
-                });
-              },
-            ),
-            const SizedBox(height: 16.0),
-            AppointmentTimePicker(
-              selectedTime: _selectedTime,
-              onTimeSelected: _onTimeSelected,
-            ),
-            const SizedBox(height: 16.0),
-            Text('End Time: ${_endTime.format(context)}'), // Display the calculated end time
-            const SizedBox(height: 32.0),
-            ElevatedButton(
-              onPressed: _confirmAppointment,
-              child: const Text('Confirm Appointment'),
-            ),
-          ],
-        ),
+      body: FutureBuilder<Product>(
+        future: _productFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text('Product not found'));
+          } else {
+            final product = snapshot.data!;
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AppointmentDatePicker(
+                    selectedDate: _selectedDate,
+                    onDateSelected: (date) {
+                      setState(() {
+                        _selectedDate = date;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  AppointmentTimePicker(
+                    selectedTime: _selectedTime,
+                    onTimeSelected: _onTimeSelected,
+                  ),
+                  const SizedBox(height: 16.0),
+                  AppointmentEndTimeDisplay(endTime: _endTime),
+                  const SizedBox(height: 32.0),
+                  ElevatedButton(
+                    onPressed: () => _confirmAppointment(product),
+                    child: const Text('Confirm Appointment'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }

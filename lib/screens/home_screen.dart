@@ -1,7 +1,7 @@
-import 'package:beauty_salon/services/stripe_service.dart';
 import 'package:flutter/material.dart';
-import 'category_screen.dart';
 import 'package:beauty_salon/global.dart' as globals;
+import 'package:beauty_salon/screens/category_screen.dart';
+import 'package:beauty_salon/widgets/grid_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -25,10 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             IconButton(
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomeScreen())
-                );
+                // Additional actions can be added here
               },
               icon: const Icon(Icons.person),
             ),
@@ -42,68 +39,34 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisSpacing: 20.0,
             padding: const EdgeInsets.all(20.0),
             children: [
-              _buildGridButton(
+              GridButton(
                 icon: Icons.ads_click_rounded,
                 label: 'MINTO',
                 onTap: () {
                   globals.globalTownId = 1;
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => CategoryScreen(townId: globals.globalTownId))
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CategoryScreen(townId: globals.globalTownId),
+                    ),
                   );
                 },
               ),
-              _buildGridButton(
+              GridButton(
                 icon: Icons.ads_click_rounded,
                 label: 'CAMPBELLTOWN',
                 onTap: () {
                   globals.globalTownId = 2;
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => CategoryScreen(townId: globals.globalTownId))
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CategoryScreen(townId: globals.globalTownId),
+                    ),
                   );
-                },
-              ),
-              _buildGridButton(
-                icon: Icons.ads_click_rounded,
-                label: 'Payment Test',
-                onTap: () {
-                  StripeService.instance.makePayment();
                 },
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGridButton({required IconData icon, required String label, required VoidCallback onTap}) {
-    return GridTile(
-      child: ElevatedButton(
-        onPressed: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 50, color: const Color.fromRGBO(120, 153, 123, 1)),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 17,
-                color: Colors.black,
-              ),
-            ),
-          ],
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 191, 232, 225),
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          padding: const EdgeInsets.all(20),
         ),
       ),
     );

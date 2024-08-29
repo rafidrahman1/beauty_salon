@@ -7,13 +7,13 @@ class StripeService {
 
   static final StripeService instance = StripeService._();
 
-  Future<void> makePayment() async {
+  Future<bool> makePayment(double amount) async {
     try {
       String? paymentIntentClientSecret = await _createPaymentIntent(
-        100,
+        (amount * 100).toInt(), // Convert amount to cents
         "usd",
       );
-      if (paymentIntentClientSecret == null) return;
+      if (paymentIntentClientSecret == null) return false;
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentIntentClientSecret,
@@ -21,8 +21,10 @@ class StripeService {
         ),
       );
       await _processPayment();
+      return true;
     } catch (e) {
       print(e);
+      return false;
     }
   }
 
@@ -30,9 +32,7 @@ class StripeService {
     try {
       final Dio dio = Dio();
       Map<String, dynamic> data = {
-        "amount": _calculateAmount(
-          amount,
-        ),
+        "amount": amount.toString(),
         "currency": currency,
       };
       var response = await dio.post(
@@ -63,10 +63,5 @@ class StripeService {
     } catch (e) {
       print(e);
     }
-  }
-
-  String _calculateAmount(int amount) {
-    final calculatedAmount = amount * 100;
-    return calculatedAmount.toString();
   }
 }

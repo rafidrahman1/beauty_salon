@@ -1,14 +1,13 @@
-import 'package:beauty_salon/screens/appointment_screen.dart';
-import 'package:beauty_salon/screens/category_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:beauty_salon/screens/appointment_screen.dart';
+import 'package:beauty_salon/screens/product_detail_screen.dart';
 import 'package:beauty_salon/services/product_service.dart';
 import 'package:beauty_salon/model/product.dart';
-import 'package:beauty_salon/global.dart' as globals;
-
+import 'package:beauty_salon/widgets/product_tile.dart';
+import 'package:beauty_salon/widgets/floating_action_button_cart.dart';
 
 class ProductScreen extends StatefulWidget {
   final int categoryId;
-
 
   const ProductScreen({required this.categoryId, super.key});
 
@@ -42,22 +41,19 @@ class _ProductScreenState extends State<ProductScreen> {
             return const Center(child: Text('No products found'));
           } else {
             final products = snapshot.data!;
-
             return ListView.builder(
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];
-                return ListTile(
-                  title: Text(product.name),
-                  subtitle: Text(
-                      'Time: ${product.time} min | Price: \$${product.price}'),
+                return ProductTile(
+                  product: product,
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => AppointmentScreen(
-                            productId: product.id,
-                            productDuration: product.time
+                          productId: product.id,
+                          productDuration: product.time,
                         ),
                       ),
                     );
@@ -68,16 +64,15 @@ class _ProductScreenState extends State<ProductScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButtonCart(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CategoryScreen(townId: globals.globalTownId),
+              builder: (context) => ProductDetailScreen(),
             ),
           );
         },
-        child: const Icon(Icons.shopping_cart),
       ),
     );
   }

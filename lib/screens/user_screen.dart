@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../services/order_service.dart';
-import '../utils/form_validators.dart';
+import 'package:beauty_salon/screens/payment_screen.dart';
+import 'package:beauty_salon/services/order_service.dart';
+import 'package:beauty_salon/global.dart' as globals;
+import 'package:beauty_salon/widgets/order_form.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -10,100 +12,55 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _orderNameController = TextEditingController();
-  final _orderEmailController = TextEditingController();
-  final _orderPhoneController = TextEditingController();
-  final _orderCommentController = TextEditingController();
-
-  @override
-  void dispose() {
-    _orderNameController.dispose();
-    _orderEmailController.dispose();
-    _orderPhoneController.dispose();
-    _orderCommentController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      final orderName = _orderNameController.text;
-      final orderEmail = _orderEmailController.text;
-      final orderPhone = _orderPhoneController.text;
-      final orderComment = _orderCommentController.text;
-      final orderDetails = "Some details"; // Add as necessary
-      final orderPrice = 100.00; // Add as necessary
-
-      final result = await OrderService.createOrder(
-        name: orderName,
-        email: orderEmail,
-        phone: orderPhone,
-        comment: orderComment,
-        details: orderDetails,
-        price: orderPrice,
-      );
-
-      if (result) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Order Created Successfully')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to create order')),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Order Information'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _orderNameController,
-                decoration: const InputDecoration(labelText: 'Order Name'),
-                validator: (value) => FormValidators.validateRequired(value, 'Order name is required'),
-              ),
-              const SizedBox(height: 16.0),
+      body: OrderForm(
+        onSubmitOrder: (orderName, orderEmail, orderPhone, orderComment) async {
+          globals.globalOrderName = orderName;
+          globals.globalOrderEmail = orderEmail;
+          globals.globalOrderPhone = orderPhone;
+          globals.globalOrderComment = orderComment;
 
-              TextFormField(
-                controller: _orderEmailController,
-                decoration: const InputDecoration(labelText: 'Order Email'),
-                keyboardType: TextInputType.emailAddress,
-                validator: FormValidators.validateEmail,
-              ),
-              const SizedBox(height: 16.0),
+          final productDetails = globals.selectedProducts.map((product) {
+            return '${product.name} - Time: ${product.time} min | Price: \$${product.price}';
+          }).join('\n');
 
-              TextFormField(
-                controller: _orderPhoneController,
-                decoration: const InputDecoration(labelText: 'Order Phone Number'),
-                keyboardType: TextInputType.phone,
-                validator: FormValidators.validatePhoneNumber,
-              ),
-              const SizedBox(height: 16.0),
+          final totalAmount = globals.selectedProducts.fold(
+            0.0,
+                (sum, product) => sum + product.price,
+          );
 
-              TextFormField(
-                controller: _orderCommentController,
-                decoration: const InputDecoration(labelText: 'Order Comment'),
-                maxLines: 3,
-              ),
-              const SizedBox(height: 32.0),
+          await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PaymentScreen(
+                amount: totalAmount,
+                onSuccess: () async {
+                  final result = await OrderService.createOrder(
+                    name: orderName,
+                    email: orderEmail,
+                    phone: orderPhone,
+                    comment: orderComment,
+                    details: productDetails,
+                    price: totalAmount,
+                  );
 
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text('Submit Order'),
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(result
+                          ? 'Order Created Successfully'
+                          : 'Failed to create order'),
+                    ),
+                  );
+                },
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
