@@ -1,7 +1,7 @@
-import 'package:beauty_salon/screens/appointment_screen.dart';
 import 'package:beauty_salon/services/stripe_service.dart';
 import 'package:flutter/material.dart';
 import 'category_screen.dart';
+import 'package:beauty_salon/global.dart' as globals;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -46,9 +46,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.ads_click_rounded,
                 label: 'MINTO',
                 onTap: () {
+                  globals.globalTownId = 1;
                   Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const CategoryScreen(townId: 1))
+                      MaterialPageRoute(builder: (_) => CategoryScreen(townId: globals.globalTownId))
                   );
                 },
               ),
@@ -56,9 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.ads_click_rounded,
                 label: 'CAMPBELLTOWN',
                 onTap: () {
+                  globals.globalTownId = 2;
                   Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const CategoryScreen(townId: 2))
+                      MaterialPageRoute(builder: (_) => CategoryScreen(townId: globals.globalTownId))
                   );
                 },
               ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:beauty_salon/model/product.dart';
 import 'package:beauty_salon/services/product_service.dart';
+import 'package:beauty_salon/screens/category_screen.dart';
+import 'package:beauty_salon/global.dart' as globals;
 
 class ProductDetailScreen extends StatelessWidget {
   final int productId;
@@ -23,18 +25,36 @@ class ProductDetailScreen extends StatelessWidget {
           } else if (!snapshot.hasData) {
             return const Center(child: Text('Product not found'));
           } else {
-            final product = snapshot.data!;
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(product.name, style: Theme.of(context).textTheme.headlineSmall),
-                  const SizedBox(height: 10),
-                  Text('Time: ${product.time} min', style: Theme.of(context).textTheme.bodyLarge),
-                  const SizedBox(height: 5),
-                  Text('Price: \$${product.price}', style: Theme.of(context).textTheme.bodyLarge),
-
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: globals.selectedProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = globals.selectedProducts[index];
+                        return ListTile(
+                          title: Text(product.name),
+                          subtitle: Text('Time: ${product.time} min | Price: \$${product.price}'),
+                        );
+                      },
+                    ),
+                  ),
+                  const Spacer(), // Push the button to the bottom
+                  ElevatedButton(
+                    onPressed: () {
+                      // Navigate to the CategoryScreen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CategoryScreen(townId: globals.globalTownId),
+                        ),
+                      );
+                    },
+                    child: const Text('Add More Products'),
+                  ),
                 ],
               ),
             );

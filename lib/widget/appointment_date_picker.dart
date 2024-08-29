@@ -28,7 +28,7 @@ class AppointmentDatePicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: const Text('Select Date'),
-      subtitle: Text(DateFormat('yyyy-MM-dd').format(selectedDate)),
+      subtitle: Text(DateFormat('dd-MMM-yy').format(selectedDate)),
       trailing: const Icon(Icons.calendar_today),
       onTap: () => _selectDate(context),
     );
