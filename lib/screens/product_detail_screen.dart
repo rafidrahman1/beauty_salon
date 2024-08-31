@@ -74,6 +74,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   void _confirmOrder() {
     if (globals.selectedProducts.isNotEmpty) {
+      // Save product IDs globally
+      globals.globalProductIds = globals.selectedProducts.map((product) => product.id).toList();
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => UserScreen()),

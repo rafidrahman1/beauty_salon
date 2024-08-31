@@ -11,7 +11,7 @@ class StripeService {
     try {
       String? paymentIntentClientSecret = await _createPaymentIntent(
         (amount * 100).toInt(), // Convert amount to cents
-        "usd",
+        "aud",
       );
       if (paymentIntentClientSecret == null) return false;
       await Stripe.instance.initPaymentSheet(

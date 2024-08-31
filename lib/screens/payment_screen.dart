@@ -4,7 +4,7 @@ import 'package:beauty_salon/services/order_service.dart'; // Import OrderServic
 import 'package:beauty_salon/global.dart' as globals;
 
 class PaymentScreen extends StatefulWidget {
-  final double amount; // Amount to be charged
+  final double amount;
   final String orderName;
   final String orderEmail;
   final String orderPhone;
@@ -24,7 +24,8 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  bool _isProcessing = false; // Track payment processing state
+  bool _isProcessing = false;
+  double? _calculatedPrice;
 
   Future<void> _makePayment() async {
     setState(() {
@@ -32,29 +33,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
     });
 
     try {
-      final result = await StripeService.instance.makePayment(widget.amount);
+      final paymentResult = await StripeService.instance.makePayment(widget.amount);
 
-      if (result) {
-        // Payment successful, create the order
+      if (paymentResult) {
         final orderDetails = globals.selectedProducts.map((product) {
           return '${product.name} - Time: ${product.time} min | Price: \$${product.price}';
         }).join('\n');
 
-        final totalAmount = globals.selectedProducts.fold(
-          0.0,
-              (sum, product) => sum + product.price,
-        );
-
-        final orderCreated = await OrderService.createOrder(
+        final orderCreatedPrice = await OrderService.createOrder(
           name: widget.orderName,
           email: widget.orderEmail,
           phone: widget.orderPhone,
           comment: widget.orderComment,
           details: orderDetails,
-          price: totalAmount,
+          price: widget.amount,
+          productIds: globals.globalProductIds,
         );
 
-        if (orderCreated) {
+        if (orderCreatedPrice != null) {
+          setState(() {
+            _calculatedPrice = orderCreatedPrice;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Order Created Successfully')),
           );
@@ -65,13 +64,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
           );
         }
       } else {
-        // Payment failed
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Payment failed. Please try again.')),
         );
       }
     } catch (e) {
-      // Handle error
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -97,6 +94,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
               'Amount to be charged: \$${widget.amount.toStringAsFixed(2)}',
               style: Theme.of(context).textTheme.titleLarge,
             ),
+            if (_calculatedPrice != null)
+              Text(
+                'Calculated Price: \$${_calculatedPrice!.toStringAsFixed(2)}',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
             const SizedBox(height: 20),
             if (_isProcessing)
               const CircularProgressIndicator()
